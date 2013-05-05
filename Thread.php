@@ -6,7 +6,8 @@ class Thread {
 		$this->runnable = $runnable;
 	}
 
-	function start($state_manager) {
+	function start($state_manager, $operation_id) {
+		$state_manager->setState($operation_id, "process");
 		$pid = pcntl_fork();
 		if ($pid == -1)
 			return false;
@@ -14,16 +15,15 @@ class Thread {
 			$result = null;
 			try {
 				$result = $this->runnable->run();
-				$state_manager->setResult(getmypid(), $result);
-				$state_manager->setState(getmypid(), "done");
+				$state_manager->setResult($operation_id, $result);
+				$state_manager->setState($operation_id, "done");
 			} catch (Exception $e) {
-				$state_manager->setResult(getmypid(), $e);
-				$state_manager->setState(getmypid(), "error");
+				$state_manager->setResult($operation_id, $e);
+				$state_manager->setState($operation_id, "error");
 			}
 			exit(0);
 		} else {
-			$state_manager->setState($pid, "process");
-			return $pid;
+			return $operation_id;
 		}
 	}
 
