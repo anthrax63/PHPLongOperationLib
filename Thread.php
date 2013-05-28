@@ -13,15 +13,16 @@ class Thread {
 			return false;
 		if (!$pid) {
 			$result = null;
+			error_log("Im here!");
 			try {
 				$result = $this->runnable->run();
 				$state_manager->setResult($operation_id, $result);
 				$state_manager->setState($operation_id, "done");
 			} catch (Exception $e) {
-				$state_manager->setResult($operation_id, $e);
 				$state_manager->setState($operation_id, "error");
+				$state_manager->setResult($operation_id, $e);
 			}
-			exit(0);
+			posix_kill(getmypid(), SIGTERM);
 		} else {
 			return $operation_id;
 		}

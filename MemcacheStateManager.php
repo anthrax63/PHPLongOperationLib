@@ -16,7 +16,7 @@ class MemcacheStateManager extends StateManager {
 	}	
 
 	function __destruct() {
-        $this->disconnect();
+        //$this->disconnect();
     }
 
     function connect() {
